@@ -1,0 +1,12 @@
+services:
+  thermal:
+    container_name: thermal_parser
+    build:
+      dockerfile: Dockerfile
+      context: ./
+    restart: unless-stopped
+    command: uvicorn server:app --host 0.0.0.0 --port 8080
+    environment:
+      - LD_LIBRARY_PATH=/usr/lib/dji/release_x64
+    ports:
+      - "8080:8080"

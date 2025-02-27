@@ -1,37 +1,28 @@
-# Use an official Python runtime as a parent image
-FROM --platform=linux/amd64 python:3.9-slim
+FROM python:3.12-slim
 
-# Install required system packages
 RUN apt-get update && apt-get install -y \
+    curl \
+    unzip \
     libgomp1 \
     exiftool \
     libjpeg-dev \
     && rm -rf /var/lib/apt/lists/*
 
-# Set the working directory in the container
+RUN curl -o dji_thermal_sdk_v1.7_20241205.zip "https://terra-1-g.djicdn.com/2640963bcd8e45c0a4f0cb9829739d6b/TSDK/v1.7(12.0-WA345T)/dji_thermal_sdk_v1.7_20241205.zip"
+RUN unzip dji_thermal_sdk_v1.7_20241205.zip -d dji && \
+    mkdir /usr/lib/dji && \
+    cp -r dji/tsdk-core/lib/linux/* /usr/lib/dji/
+
 WORKDIR /usr/src/app
 
-# Copy the requirements file into the container at /usr/src/app
 COPY requirements.txt .
 
-# Install any needed packages specified in requirements.txt
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Copy the entire contents of the local directory to the working directory in the container
-COPY . .
+COPY thermal_parser.py thermal_parser.py
+COPY server.py server.py
+COPY entrypoint.sh entrypoint.sh
 
-# Copy the .env file into the container
-COPY .env .env
+RUN chmod +x entrypoint.sh
 
-# Ensure that the necessary directories exist
-RUN mkdir -p plugins/dji_thermal_sdk_v1.5_20240507
-
-# Copy the necessary plugin files into the container
-COPY plugins/ plugins/
-
-# Run the setup.py to install the package
-# RUN pip install setup.py
-RUN pip install .
-
-# Command to run your application or start an interactive shell
-CMD ["python"]
+CMD ["./entrypoint.sh"]
