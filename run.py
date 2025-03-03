@@ -11,7 +11,7 @@ with open(filename, 'rb') as f:
     content = f.read()
 
 response = requests.post(
-    'http://localhost:8080',
+    'http://localhost:8081',
     files={"photo": (filename, content)}
 )
 
