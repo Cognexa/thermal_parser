@@ -1,0 +1,1 @@
+download [DJI Thermal SDK](https://www.dji.com/cn/downloads/softwares/dji-thermal-sdk) and use `dji_thermal_sdk_v1.x_<date>/utility/bin/linux/release_x64/dji_irp` bin to convert the R-JPEG images to CSV format.
