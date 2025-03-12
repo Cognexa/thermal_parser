@@ -3,6 +3,7 @@ from fastapi import FastAPI
 from fastapi import File, UploadFile, Response, HTTPException
 import logging
 import subprocess
+import os
 
 log = logging.getLogger("uvicorn")
 app = FastAPI()
@@ -58,6 +59,10 @@ async def extract_temperatures(photo: UploadFile = File(...)):
         log.info(f"Read temperature data shape: {temperature.shape}")
     except Exception as e:
         log.error(f"Error parsing output and reshaping temperature data: {e}")
+
+    # clean up intermediate files
+    os.remove(f"/tmp/{photo.filename}")
+    os.remove(raw_filename)
 
     return Response(
         temperature.tobytes(),
