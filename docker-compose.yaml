@@ -5,8 +5,6 @@ services:
       dockerfile: Dockerfile
       context: ./
     restart: unless-stopped
-    command: uvicorn server:app --host 0.0.0.0 --port 8080
-    environment:
-      - LD_LIBRARY_PATH=/usr/lib/dji/release_x64
+    command: uvicorn server:app --host 0.0.0.0 --port 8081
     ports:
-      - "8081:8080"
+      - "8081:8081"
