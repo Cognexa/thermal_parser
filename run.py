@@ -1,21 +1,29 @@
+import asyncio
+
+import httpx
 import requests
 import numpy as np
 from PIL import Image
 
-filename = 'DJI_20240729120840_0001_T_point0.JPG'
+async def main():
 
-with Image.open(filename) as image:
-    width, height = image.size
+    filename = 'DJI_20240729120840_0001_T_point0.JPG'
 
-with open(filename, 'rb') as f:
-    content = f.read()
+    with Image.open(filename) as image:
+        width, height = image.size
 
-response = requests.post(
-    'http://localhost:8081',
-    files={"photo": (filename, content)}
-)
+    with open(filename, 'rb') as f:
+        content = f.read()
 
-temperatures_arr = np.frombuffer(response.content, dtype=np.float32)
-temperatures_arr = temperatures_arr.reshape((height, width))
+    async with httpx.AsyncClient() as cl:
+        response = await cl.post(
+            'http://localhost:8081',
+            files={"photo": (filename, content)}
+        )
 
-print(temperatures_arr)
+    temperatures_arr = np.frombuffer(response.content, dtype=np.float32)
+    temperatures_arr = temperatures_arr.reshape((height, width))
+
+    print(temperatures_arr)
+
+asyncio.run(main())
